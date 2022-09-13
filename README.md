@@ -1,9 +1,9 @@
-# ani1a
+# ani2b
 
 Curso Fluterando
 
 ## Descrição
 
-Exercício de animações implicitas
+Exercício de animações controladas
 
-![caption](https://github.com/ccastroelo/fluterando_ani2a/blob/main/ani2a.gif)
+![caption](https://github.com/ccastroelo/fluterando_ani2b/blob/main/ani2b.gif)
