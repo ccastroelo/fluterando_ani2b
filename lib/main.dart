@@ -68,7 +68,7 @@ class _MyHomePageState extends State<MyHomePage>
                       }
                       if (data[index]["open"]) {
                         lastOpen = index;
-                        scrollController.animateTo(24.0 * index,
+                        scrollController.animateTo(32.0 * index,
                             duration: const Duration(milliseconds: 500),
                             curve: Curves.fastOutSlowIn);
                       } else {
@@ -76,7 +76,10 @@ class _MyHomePageState extends State<MyHomePage>
                       }
                     });
                   },
-                  child: MyExpansiontile(data: data[index]));
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(12, 4, 12, 4),
+                    child: MyExpansiontile(data: data[index]),
+                  ));
             }));
   }
 }
@@ -152,7 +155,14 @@ class _MyExpansiontileState extends State<MyExpansiontile>
                 child: Align(
                   alignment: Alignment.center,
                   heightFactor: expandeTween.value,
-                  child: Text(widget.data["text"]),
+                  child: Column(
+                    children: [
+                      SizedBox(
+                          height: 30,
+                          child: Image.network(widget.data["image"])),
+                      Text(widget.data["text"]),
+                    ],
+                  ),
                 ),
               )
             ],
