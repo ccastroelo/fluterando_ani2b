@@ -33,10 +33,10 @@ class _MyHomePageState extends State<MyHomePage>
       'https://docs.flutter.dev/assets/images/shared/brand/flutter/logo/flutter-lockup.png';
   String text =
       'liusdnclksan kjlscljljknc liuscnkjlsnc kljsanckjsncj clkjnsckjns ckjnclkjsn cskjncskj nckdsn clkjdcsnkjcn dsclkjkjdsnc ksnclknpjfd fjejfoeq fqoijfoij f foifqoi fnwjfoi jfi ncnn n ewnc oincin coin coin icçlikn coi';
-  int lastOpen = -1;
   ScrollController scrollController = ScrollController();
 
   late List<Map<String, dynamic>> data;
+  int lastOpen = -1;
 
   @override
   void initState() {
@@ -54,36 +54,30 @@ class _MyHomePageState extends State<MyHomePage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Animação 2")),
-      body: ListView.builder(
-        controller: scrollController,
-        itemCount: data.length,
-        itemBuilder: (BuildContext context, int index) {
-          return GestureDetector(
-            onTap: () {
-              data[index]["open"] = !data[index]["open"];
-              if (lastOpen != index && lastOpen > -1) {
-                data[lastOpen]["open"] = false;
-              }
-              if (data[index]["open"]) {
-                lastOpen = index;
-                scrollController.animateTo(24.0 * index,
-                    duration: const Duration(milliseconds: 500),
-                    curve: Curves.fastOutSlowIn);
-              } else {
-                lastOpen = -1;
-              }
-              if (data[index]["open"]) {
-                animationController.forward();
-              } else {
-                animationController.reverse();
-              }
-            },
-            child: MyExpansiontile(data: data[index]),
-          );
-        },
-      ),
-    );
+        appBar: AppBar(title: const Text("Animação 2")),
+        body: ListView.builder(
+            controller: scrollController,
+            itemCount: data.length,
+            itemBuilder: (BuildContext context, int index) {
+              return GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      data[index]["open"] = !data[index]["open"];
+                      if (lastOpen != index && lastOpen > -1) {
+                        data[lastOpen]["open"] = false;
+                      }
+                      if (data[index]["open"]) {
+                        lastOpen = index;
+                        scrollController.animateTo(24.0 * index,
+                            duration: const Duration(milliseconds: 500),
+                            curve: Curves.fastOutSlowIn);
+                      } else {
+                        lastOpen = -1;
+                      }
+                    });
+                  },
+                  child: MyExpansiontile(data: data[index]));
+            }));
   }
 }
 
@@ -107,20 +101,38 @@ class _MyExpansiontileState extends State<MyExpansiontile>
   late Animation colorTween;
 
   @override
+  void didUpdateWidget(MyExpansiontile oldWidget) {
+    if (widget.data["open"]) {
+      open();
+    } else {
+      close();
+    }
+    super.didUpdateWidget(oldWidget);
+  }
+
+  @override
   void initState() {
     super.initState();
     animationController = AnimationController(
         vsync: this, duration: const Duration(milliseconds: 300));
-    rotateTween = Tween(begin: 180.0, end: 0.0).animate(animationController);
+    rotateTween = Tween(begin: 0.0, end: 3.14).animate(animationController);
     expandeTween = Tween(begin: 0.0, end: 1.0).animate(animationController);
     colorTween = ColorTween(begin: Colors.grey, end: Colors.blue)
         .animate(animationController);
   }
 
+  open() {
+    animationController.forward();
+  }
+
+  close() {
+    animationController.reverse();
+  }
+
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
-        animation: widget.animationController,
+        animation: animationController,
         builder: (context, child) {
           return Column(
             children: [
@@ -128,10 +140,10 @@ class _MyExpansiontileState extends State<MyExpansiontile>
                 children: [
                   Expanded(child: Text(widget.data["title"])),
                   Transform.rotate(
-                    angle: widget.rotateTween.value,
+                    angle: rotateTween.value,
                     child: Icon(
                       Icons.keyboard_arrow_down_outlined,
-                      color: widget.colorTween.value,
+                      color: colorTween.value,
                     ),
                   )
                 ],
@@ -139,7 +151,7 @@ class _MyExpansiontileState extends State<MyExpansiontile>
               ClipRect(
                 child: Align(
                   alignment: Alignment.center,
-                  heightFactor: widget.expandeTween.value,
+                  heightFactor: expandeTween.value,
                   child: Text(widget.data["text"]),
                 ),
               )
